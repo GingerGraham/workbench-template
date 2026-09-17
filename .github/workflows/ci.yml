@@ -22,10 +22,16 @@ jobs:
         # this template repo itself, or in a generated repo's first push
         # before template-bootstrap.yml has committed its substitution --
         # module-ci would otherwise run against a literal placeholder
-        # module name.
+        # module name. This file (and release.yml) is excluded from its
+        # own scan: this detection line's literal token strings are
+        # permanent code, not substitutable content, so without the
+        # exclusion the guard would keep seeing them after every other
+        # real placeholder is long gone and report "unsubstituted"
+        # forever, permanently disabling CI.
         run: |
           set -euo pipefail
-          if grep -rIq -e '__MODULE_OWNER__' -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
+          if grep -rIq -e '__MODULE_OWNER__' -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
+            --exclude-dir=.git --exclude=ci.yml --exclude=release.yml .; then
             echo "substituted=false" >> "$GITHUB_OUTPUT"
           else
             echo "substituted=true" >> "$GITHUB_OUTPUT"

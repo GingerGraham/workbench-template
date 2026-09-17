@@ -21,15 +21,21 @@ jobs:
           set -euo pipefail
           owner="${GITHUB_REPOSITORY%%/*}"
           repo_name="${GITHUB_REPOSITORY##*/}"
-          short="${repo_name#workbench-}"
-          # A repo literally named "workbench-" (or, in principle, not
-          # matching the workbench-<name> convention at all) would
-          # otherwise substitute __MODULE_SHORT__ to an empty string --
-          # refuse loudly rather than generating a broken scaffold.
-          if [[ -z "${short}" ]]; then
-            echo "::error::Repository name '${repo_name}' yields an empty module short name (expected workbench-<name>) -- refusing to substitute." >&2
-            exit 1
-          fi
+          # Require the workbench-<name> convention this scaffold (and
+          # its docs) assume, rather than just checking the stripped
+          # result is non-empty -- a repo not matching the prefix at all
+          # (e.g. "something-else") would otherwise leave $short equal to
+          # the full repo name unchanged, silently wrong rather than
+          # refused.
+          case "${repo_name}" in
+            workbench-?*)
+              short="${repo_name#workbench-}"
+              ;;
+            *)
+              echo "::error::Repository name '${repo_name}' doesn't match the workbench-<name> convention this template assumes -- refusing to substitute." >&2
+              exit 1
+              ;;
+          esac
           echo "module_owner=${owner}" >> "$GITHUB_OUTPUT"
           echo "module_repo=${repo_name}" >> "$GITHUB_OUTPUT"
           echo "module_short=${short}" >> "$GITHUB_OUTPUT"
@@ -41,13 +47,29 @@ jobs:
           MODULE_SHORT: ${{ steps.names.outputs.module_short }}
         run: |
           set -euo pipefail
+
+          # ci.yml/release.yml's own guard job checks for the literal
+          # __MODULE_*__ token strings as ITS detection logic, not as
+          # substitutable content -- a blanket pass would rewrite that
+          # grep pattern into matching the real substituted values
+          # instead, and since those values legitimately appear
+          # elsewhere in the tree too (README.md, workbench.yml's
+          # header, ...) the guard would then find a permanent false
+          # match and disable CI/release forever. Excluded from the
+          # blanket pass below; their one genuine substitution point
+          # (module_name:) is handled on its own further down.
+          # template-bootstrap.yml itself is excluded too, purely so it
+          # doesn't needlessly rewrite its own still-running script
+          # immediately before deleting it.
           matches="$(mktemp)"
           # grep exits 1 (not an error here) when nothing still needs
           # substituting -- captured to a file rather than piped
           # straight into xargs so that exit code doesn't fail the step
           # under pipefail; only a real grep error (>1) does.
           grep -rlIZ -e '__MODULE_OWNER__' -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
-            --exclude-dir=.git . > "${matches}" || {
+            --exclude-dir=.git \
+            --exclude=ci.yml --exclude=release.yml --exclude=template-bootstrap.yml \
+            . > "${matches}" || {
               status=$?
               [[ ${status} -eq 1 ]] || exit "${status}"
             }
@@ -58,6 +80,12 @@ jobs:
               -e "s/__MODULE_SHORT__/${MODULE_SHORT}/g" \
               -- < "${matches}"
           fi
+
+          for _f in .github/workflows/ci.yml .github/workflows/release.yml; do
+            [[ -f "${_f}" ]] || continue
+            sed -i -e "s/^\( *module_name: \)__MODULE_SHORT__\$/\\1${MODULE_SHORT}/" -- "${_f}"
+          done
+
           rm -f "${matches}" .github/workflows/template-bootstrap.yml
 
       - name: Commit and push

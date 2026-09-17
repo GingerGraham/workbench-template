@@ -22,10 +22,16 @@ jobs:
         # before template-bootstrap.yml has committed its substitution --
         # release automation would otherwise run against a literal
         # placeholder module name, and against a template repo that never
-        # carries a RELEASE_APP_PRIVATE_KEY secret.
+        # carries a RELEASE_APP_PRIVATE_KEY secret. This file (and
+        # ci.yml) is excluded from its own scan: this detection line's
+        # literal token strings are permanent code, not substitutable
+        # content, so without the exclusion the guard would keep seeing
+        # them after every other real placeholder is long gone and
+        # report "unsubstituted" forever, permanently disabling release.
         run: |
           set -euo pipefail
-          if grep -rIq -e '__MODULE_OWNER__' -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
+          if grep -rIq -e '__MODULE_OWNER__' -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
+            --exclude-dir=.git --exclude=ci.yml --exclude=release.yml .; then
             echo "substituted=false" >> "$GITHUB_OUTPUT"
           else
             echo "substituted=true" >> "$GITHUB_OUTPUT"
