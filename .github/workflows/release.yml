@@ -9,8 +9,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  guard:
+    name: Check placeholders substituted
+    runs-on: ubuntu-latest
+    outputs:
+      substituted: ${{ steps.check.outputs.substituted }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        # __MODULE_SHORT__/__MODULE_REPO__ are only ever unsubstituted in
+        # this template repo itself, or in a generated repo's first push
+        # before template-bootstrap.yml has committed its substitution --
+        # release automation would otherwise run against a literal
+        # placeholder module name, and against a template repo that never
+        # carries a RELEASE_APP_PRIVATE_KEY secret.
+        run: |
+          set -euo pipefail
+          if grep -rlq -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
+            echo "substituted=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "substituted=true" >> "$GITHUB_OUTPUT"
+          fi
+
   ci:
-    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    needs: guard
+    if: needs.guard.outputs.substituted == 'true' && !startsWith(github.event.head_commit.message, 'chore(release):')
     uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@main
     with:
       module_name: __MODULE_SHORT__
