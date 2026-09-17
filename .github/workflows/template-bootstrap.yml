@@ -1,0 +1,49 @@
+name: Template bootstrap
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  bootstrap:
+    name: Substitute module placeholders
+    runs-on: ubuntu-latest
+    if: github.repository != 'GingerGraham/workbench-template'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Derive module names
+        id: names
+        run: |
+          set -euo pipefail
+          repo="${GITHUB_REPOSITORY##*/}"
+          short="${repo#workbench-}"
+          echo "module_repo=${repo}" >> "$GITHUB_OUTPUT"
+          echo "module_short=${short}" >> "$GITHUB_OUTPUT"
+
+      - name: Substitute placeholders and remove this workflow
+        env:
+          MODULE_REPO: ${{ steps.names.outputs.module_repo }}
+          MODULE_SHORT: ${{ steps.names.outputs.module_short }}
+        run: |
+          set -euo pipefail
+          grep -rlZ -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
+            --exclude-dir=.git . | \
+            xargs -0 -r sed -i \
+              -e "s/__MODULE_REPO__/${MODULE_REPO}/g" \
+              -e "s/__MODULE_SHORT__/${MODULE_SHORT}/g"
+          rm -f .github/workflows/template-bootstrap.yml
+
+      - name: Commit and push
+        env:
+          MODULE_REPO: ${{ steps.names.outputs.module_repo }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: initialise ${MODULE_REPO} from workbench-template"
+          git push

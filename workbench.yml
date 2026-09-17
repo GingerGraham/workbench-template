@@ -1,0 +1,20 @@
+# workbench.yml — __MODULE_REPO__
+version: 2
+branch: main
+core_api: ">=1.0 <2.0"  # narrow this once you know which core functions you actually use
+
+info:
+  description: "TODO: one-line description of __MODULE_SHORT__"
+
+register:
+  shell: []
+  installers: []
+  getters: []
+
+deploy: []
+
+# hooks:
+#   post_deploy:
+#     command: ["hooks/post-deploy.sh"]
+#     run_on: changed
+#     timeout: 300
