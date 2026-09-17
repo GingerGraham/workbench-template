@@ -18,14 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: check
-        # __MODULE_SHORT__/__MODULE_REPO__ are only ever unsubstituted in
+        # __MODULE_OWNER__/__MODULE_REPO__/__MODULE_SHORT__ are only ever unsubstituted in
         # this template repo itself, or in a generated repo's first push
         # before template-bootstrap.yml has committed its substitution --
         # module-ci would otherwise run against a literal placeholder
         # module name.
         run: |
           set -euo pipefail
-          if grep -rIq -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
+          if grep -rIq -e '__MODULE_OWNER__' -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
             echo "substituted=false" >> "$GITHUB_OUTPUT"
           else
             echo "substituted=true" >> "$GITHUB_OUTPUT"
