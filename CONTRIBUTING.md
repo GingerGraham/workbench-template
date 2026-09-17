@@ -26,7 +26,7 @@ working branch, from a machine that already has `workbench-core`
 installed:
 
 ```sh
-git clone https://github.com/GingerGraham/__MODULE_REPO__.git
+git clone https://github.com/__MODULE_OWNER__/__MODULE_REPO__.git
 cd __MODULE_REPO__
 
 # if not already registered on this machine:

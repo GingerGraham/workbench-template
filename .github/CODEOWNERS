@@ -6,4 +6,4 @@
 # doesn't (D33) — a single owner can't satisfy a required-reviewer rule
 # for their own PR.
 
-* @GingerGraham
+* @__MODULE_OWNER__

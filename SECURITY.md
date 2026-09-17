@@ -9,7 +9,7 @@ There are no maintained LTS branches.
 
 **Please don't open a public issue for a security problem.** Use
 GitHub's private vulnerability reporting instead: go to the
-[Security tab](https://github.com/GingerGraham/__MODULE_REPO__/security)
+[Security tab](https://github.com/__MODULE_OWNER__/__MODULE_REPO__/security)
 → "Report a vulnerability". This opens a private advisory only visible
 to the maintainer until it's resolved.
 
