@@ -43,11 +43,11 @@ no shared git history, which is what fires the `push` event
 On the new repo's first push, that workflow substitutes
 `__MODULE_OWNER__`/`__MODULE_REPO__`/`__MODULE_SHORT__` throughout the
 tree, commits the result, and deletes itself — no manual step required.
-**Do this before**
-applying the standard module branch ruleset (mirroring the other
-`workbench-*` repos) to the new repo: a freshly generated repo has no
-ruleset yet, so the bootstrap workflow's direct push to `main` works;
-once a ruleset blocking direct pushes is in place, it won't.
+**Do this before** applying the standard module branch ruleset
+(mirroring the other `workbench-*` repos) to the new repo: a freshly
+generated repo has no ruleset yet, so the bootstrap workflow's direct
+push to `main` works; once a ruleset blocking direct pushes is in
+place, it won't.
 
 Everything in this template ships unconditionally, including `hooks/` —
 delete what your module doesn't need rather than the reverse. This
