@@ -22,6 +22,14 @@ jobs:
           owner="${GITHUB_REPOSITORY%%/*}"
           repo_name="${GITHUB_REPOSITORY##*/}"
           short="${repo_name#workbench-}"
+          # A repo literally named "workbench-" (or, in principle, not
+          # matching the workbench-<name> convention at all) would
+          # otherwise substitute __MODULE_SHORT__ to an empty string --
+          # refuse loudly rather than generating a broken scaffold.
+          if [[ -z "${short}" ]]; then
+            echo "::error::Repository name '${repo_name}' yields an empty module short name (expected workbench-<name>) -- refusing to substitute." >&2
+            exit 1
+          fi
           echo "module_owner=${owner}" >> "$GITHUB_OUTPUT"
           echo "module_repo=${repo_name}" >> "$GITHUB_OUTPUT"
           echo "module_short=${short}" >> "$GITHUB_OUTPUT"
