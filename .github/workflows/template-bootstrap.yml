@@ -19,9 +19,9 @@ jobs:
         id: names
         run: |
           set -euo pipefail
-          repo="${GITHUB_REPOSITORY##*/}"
-          short="${repo#workbench-}"
-          echo "module_repo=${repo}" >> "$GITHUB_OUTPUT"
+          repo_name="${GITHUB_REPOSITORY##*/}"
+          short="${repo_name#workbench-}"
+          echo "module_repo=${repo_name}" >> "$GITHUB_OUTPUT"
           echo "module_short=${short}" >> "$GITHUB_OUTPUT"
 
       - name: Substitute placeholders and remove this workflow
@@ -34,7 +34,8 @@ jobs:
             --exclude-dir=.git . | \
             xargs -0 -r sed -i \
               -e "s/__MODULE_REPO__/${MODULE_REPO}/g" \
-              -e "s/__MODULE_SHORT__/${MODULE_SHORT}/g"
+              -e "s/__MODULE_SHORT__/${MODULE_SHORT}/g" \
+              --
           rm -f .github/workflows/template-bootstrap.yml
 
       - name: Commit and push
