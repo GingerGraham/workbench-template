@@ -30,13 +30,23 @@ jobs:
           MODULE_SHORT: ${{ steps.names.outputs.module_short }}
         run: |
           set -euo pipefail
+          matches="$(mktemp)"
+          # grep exits 1 (not an error here) when nothing still needs
+          # substituting -- captured to a file rather than piped
+          # straight into xargs so that exit code doesn't fail the step
+          # under pipefail; only a real grep error (>1) does.
           grep -rlIZ -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
-            --exclude-dir=.git . | \
+            --exclude-dir=.git . > "${matches}" || {
+              status=$?
+              [[ ${status} -eq 1 ]] || exit "${status}"
+            }
+          if [[ -s "${matches}" ]]; then
             xargs -0 -r sed -i \
               -e "s/__MODULE_REPO__/${MODULE_REPO}/g" \
               -e "s/__MODULE_SHORT__/${MODULE_SHORT}/g" \
-              --
-          rm -f .github/workflows/template-bootstrap.yml
+              -- < "${matches}"
+          fi
+          rm -f "${matches}" .github/workflows/template-bootstrap.yml
 
       - name: Commit and push
         env:

@@ -37,8 +37,11 @@ else
     fail "no manifest found (checked ${_MANIFEST_CANDIDATES})"
 fi
 
-if [[ -n "${MANIFEST}" ]] && grep -q '^version:' "${MANIFEST}"; then
-    ok "manifest declares 'version:'"
+# .dotfiles-sync.yml is accepted unconditionally above, without a
+# version: key -- so it's exempt here too rather than re-requiring what
+# discovery deliberately didn't.
+if [[ -n "${MANIFEST}" ]] && { [[ "$(basename "${MANIFEST}")" == ".dotfiles-sync.yml" ]] || grep -q '^version:' "${MANIFEST}"; }; then
+    ok "manifest declares 'version:' (or is .dotfiles-sync.yml, exempt)"
 else
     fail "manifest missing 'version:'"
 fi
