@@ -30,7 +30,7 @@ jobs:
           MODULE_SHORT: ${{ steps.names.outputs.module_short }}
         run: |
           set -euo pipefail
-          grep -rlZ -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
+          grep -rlIZ -e '__MODULE_REPO__' -e '__MODULE_SHORT__' \
             --exclude-dir=.git . | \
             xargs -0 -r sed -i \
               -e "s/__MODULE_REPO__/${MODULE_REPO}/g" \

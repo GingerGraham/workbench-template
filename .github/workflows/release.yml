@@ -25,7 +25,7 @@ jobs:
         # carries a RELEASE_APP_PRIVATE_KEY secret.
         run: |
           set -euo pipefail
-          if grep -rlq -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
+          if grep -rIq -e '__MODULE_REPO__' -e '__MODULE_SHORT__' --exclude-dir=.git .; then
             echo "substituted=false" >> "$GITHUB_OUTPUT"
           else
             echo "substituted=true" >> "$GITHUB_OUTPUT"
