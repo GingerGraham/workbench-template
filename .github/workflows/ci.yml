@@ -6,8 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       core_ref:
-        description: "workbench-core ref to test against (default: main)"
+        description: "workbench-core ref to test against (default: core's latest release)"
         required: false
+
+permissions:
+  contents: read
 
 jobs:
   guard:
@@ -16,7 +19,7 @@ jobs:
     outputs:
       substituted: ${{ steps.check.outputs.substituted }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: check
         # __MODULE_OWNER__/__MODULE_REPO__/__MODULE_SHORT__ are only ever unsubstituted in
         # this template repo itself, or in a generated repo's first push
@@ -40,12 +43,13 @@ jobs:
   module-ci:
     needs: guard
     if: needs.guard.outputs.substituted == 'true'
-    # core_ref defaults to main, not module-ci.yml's own "latest published
-    # release" default: this feature lives entirely under .github/, which
-    # core's own release automation never version-bumps for (it only bumps
-    # on changes to registered bin/lib/bootstrap.sh files) -- so a core
-    # release containing this workflow will never exist to default to.
-    uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@main
+    # Pinned to a core release tag (workbench-core D78); Dependabot bumps it.
+    # core_ref empty = the core under test is core's latest published
+    # release (D40), not main. Pass a ref via workflow_dispatch to test
+    # against an in-flight core change.
+    permissions:
+      contents: read
+    uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@v2.21.1
     with:
       module_name: __MODULE_SHORT__
-      core_ref: ${{ github.event.inputs.core_ref || 'main' }}
+      core_ref: ${{ github.event.inputs.core_ref || '' }}

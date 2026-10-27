@@ -1,7 +1,7 @@
 # workbench.yml — __MODULE_REPO__
 version: 2
 branch: main
-core_api: ">=1.0 <2.0"  # narrow this once you know which core functions you actually use
+core_api: ">=1.8 <2.0"  # 1.8 is the floor for core-generated getters (D89); raise it if you use something newer
 
 info:
   description: "TODO: one-line description of __MODULE_SHORT__"
