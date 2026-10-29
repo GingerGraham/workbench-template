@@ -17,6 +17,12 @@ All notable changes to `__MODULE_REPO__` are documented here.
 
 ### Changed
 
+- **Bug report template asks for OS family and environment separately.**
+  The single "Platform" dropdown is replaced by an "Operating system"
+  dropdown (Fedora/RHEL, Debian/Ubuntu, Arch, SUSE, other Linux, macOS),
+  an optional distribution and version field, and an "Environment"
+  dropdown (directly on the OS, container, or WSL2), so a report says
+  which distro it ran on and whether that was WSL2 or a container.
 - **Core workflows pinned to a core release tag (workbench-core D78).**
   `ci.yml`, `pr-check.yml`, `release.yml` and `release-finalize.yml` call
   `module-*.yml@v2.21.1` instead of `@main`, and `core_ref` now defaults to
