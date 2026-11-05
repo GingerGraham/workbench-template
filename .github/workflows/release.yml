@@ -80,7 +80,7 @@ jobs:
     # core's latest release (see ci.yml).
     permissions:
       contents: read
-    uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@v2.21.1
+    uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@v2.23.1
     with:
       module_name: __MODULE_SHORT__
 
