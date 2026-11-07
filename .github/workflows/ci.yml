@@ -49,7 +49,7 @@ jobs:
     # against an in-flight core change.
     permissions:
       contents: read
-    uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@v2.21.1
+    uses: GingerGraham/workbench-core/.github/workflows/module-ci.yml@v2.24.0
     with:
       module_name: __MODULE_SHORT__
       core_ref: ${{ github.event.inputs.core_ref || '' }}
