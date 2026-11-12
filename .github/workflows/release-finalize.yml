@@ -18,6 +18,6 @@ jobs:
     # Writes use the minted App token, never GITHUB_TOKEN.
     permissions:
       contents: read
-    uses: GingerGraham/workbench-core/.github/workflows/module-release-finalize.yml@v2.21.1
+    uses: GingerGraham/workbench-core/.github/workflows/module-release-finalize.yml@v2.24.0
     secrets:
       RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
