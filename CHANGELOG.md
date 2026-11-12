@@ -7,7 +7,8 @@ All notable changes to `__MODULE_REPO__` are documented here.
 ### Added
 
 - **`tests/check-no-bare-cd.sh` guard (workbench-core D110).** Fails on a
-  bare `cd` or `ls` in `shell/` or `hooks/`; write `builtin cd` and
+  bare `cd` or `ls` in `bin/`, `lib/`, `bootstrap.sh`, `shell/` or `hooks/`
+  (whichever the module has); write `builtin cd` and
   `command ls`, since a host profile's aliases and functions would
   otherwise run inside sourced module code. A trailing `# wb-allow-bare`
   comment allows a line on purpose. Modules generated from this template
