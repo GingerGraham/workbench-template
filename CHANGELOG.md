@@ -6,6 +6,12 @@ All notable changes to `__MODULE_REPO__` are documented here.
 
 ### Added
 
+- **`tests/check-no-bare-cd.sh` guard (workbench-core D110).** Fails on a
+  bare `cd` or `ls` in `shell/` or `hooks/`; write `builtin cd` and
+  `command ls`, since a host profile's aliases and functions would
+  otherwise run inside sourced module code. A trailing `# wb-allow-bare`
+  comment allows a line on purpose. Modules generated from this template
+  inherit the guard.
 - **Manual `workflow_dispatch` release override.** `release.yml` now
   accepts a `bump_type` (patch/minor/major) input to force a release
   through `workbench-core`'s reusable `module-release.yml`, regardless of
