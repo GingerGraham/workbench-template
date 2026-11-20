@@ -39,3 +39,11 @@ All notable changes to `__MODULE_REPO__` are documented here.
   The placeholders and placeholder-guard steps are unchanged.
 - **`workbench.yml` `core_api` is `">=1.8 <2.0"`** — 1.8 is the floor for
   core-generated getters (D89).
+- **Agent and contributor guidance covers the stale-base CHANGELOG trap
+  (workbench-core D115).** `AGENTS.md`, `.github/copilot-instructions.md`,
+  `CONTRIBUTING.md`, the PR template and the conventional-commits skill
+  checklist now say to check, before opening a PR and before any later
+  push, that a release which landed on `main` since you branched hasn't
+  left your `[Unreleased]` entry inside the released section, and to look
+  at the Release run after merging. Modules generated from this template
+  inherit it.
