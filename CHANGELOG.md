@@ -6,6 +6,14 @@ All notable changes to `__MODULE_REPO__` are documented here.
 
 ### Added
 
+- **`tests/check-no-bare-alias.sh` guard (workbench-core D124).** Fails on
+  a bare `alias name=...` in `bin/`, `lib/`, `bootstrap.sh`, `shell/` or
+  `hooks/` (whichever the module has). Define aliases with
+  `workbench_alias_define <name> <module> <value>`, which leaves an alias or
+  function the user already has alone; a trailing `# wb-allow-bare-alias`
+  comment allows a line on purpose. The default `core_api` floor is now
+  `>=1.10 <2.0`, the version that provides the helper. Modules generated
+  from this template inherit both.
 - **`tests/check-no-bare-cd.sh` guard (workbench-core D110).** Fails on a
   bare `cd` or `ls` in `bin/`, `lib/`, `bootstrap.sh`, `shell/` or `hooks/`
   (whichever the module has); write `builtin cd` and
